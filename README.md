@@ -94,8 +94,8 @@ India faces a chronic disease epidemic:
 
 This repository contains comprehensive technical documentation:
 
-- **[Requirements Document](/.kiro/specs/ayushman-ai-companion/requirements.md)** - 10 user stories with detailed acceptance criteria following EARS patterns
-- **[Design Document](/.kiro/specs/ayushman-ai-companion/design.md)** - Complete technical design with:
+- **[Requirements Document](requirements.md)** - 10 user stories with detailed acceptance criteria following EARS patterns
+- **[Design Document](design.md)** - Complete technical design with:
   - System architecture
   - Component interfaces
   - Data models
