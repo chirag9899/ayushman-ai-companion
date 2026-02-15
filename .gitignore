@@ -25,7 +25,6 @@ yarn-error.log*
 
 # IDE
 .vscode/
-.kiro/
 .idea/
 *.swp
 *.swo
