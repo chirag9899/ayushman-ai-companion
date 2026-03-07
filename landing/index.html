@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayushman AI Companion — AI Care Copilot for Bharat</title>
+    
+    <!-- Social Media Meta Tags -->
+    <meta name="description" content="AI-powered healthcare companion with medication reminders, multilingual AI coach, and clinic-ready summaries. Built for AWS AI for Bharat Hackathon.">
+    
+    <!-- Open Graph / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chiragdoc.vercel.app/">
+    <meta property="og:title" content="Ayushman AI Companion — AI Care Copilot">
+    <meta property="og:description" content="Patient support + clinic-ready summary layer. Medication reminders, multilingual AI guidance, and provider handoff.">
+    <meta property="og:image" content="https://chiragdoc.vercel.app/mascot.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://chiragdoc.vercel.app/">
+    <meta property="twitter:title" content="Ayushman AI Companion">
+    <meta property="twitter:description" content="AI Care Copilot for patients + clinic-ready summary layer. AWS AI for Bharat Hackathon.">
+    <meta property="twitter:image" content="https://chiragdoc.vercel.app/mascot.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="mascot.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f4f5c;
+            --primary-dark: #0a3d47;
+            --accent: #0ea5e9;
+            --accent-light: #e0f2fe;
+            --success: #10b981;
+            --bg: #eef6f2;
+            --card: rgba(255, 255, 255, 0.9);
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: rgba(15, 79, 92, 0.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 60% 40% at 80% 0%, rgba(14, 165, 233, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 30% at 20% 100%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(238, 246, 242, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 20px rgba(15, 79, 92, 0.06);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-mascot {
+            width: 44px;
+            height: 44px;
+        }
+
+        .logo-mascot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .badge {
+            padding: 8px 16px;
+            background: white;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .social-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .mascot-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mascot-wrapper {
+            position: relative;
+            width: 450px;
+            height: 450px;
+        }
+
+        .mascot-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 60%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .mascot-glow.visible { opacity: 1; }
+
+        .mascot-main {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mascot-main.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .mascot-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 30px 60px rgba(15, 79, 92, 0.2));
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 10%; animation: float-up 4s ease-in-out infinite; }
+        .particle:nth-child(2) { top: 60%; left: 5%; animation: float-up 4s ease-in-out infinite 1s; }
+        .particle:nth-child(3) { top: 30%; right: 10%; animation: float-up 4s ease-in-out infinite 2s; }
+        .particle:nth-child(4) { top: 70%; right: 15%; animation: float-up 4s ease-in-out infinite 0.5s; }
+        .particle:nth-child(5) { top: 45%; left: 0%; animation: float-up 4s ease-in-out infinite 1.5s; }
+
+        @keyframes float-up {
+            0% { transform: translateY(20px); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+
+        .hero-text {
+            padding-left: 20px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .eyebrow.visible { opacity: 1; transform: translateY(0); }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease 0.1s;
+        }
+
+        h1.visible { opacity: 1; transform: translateY(0); }
+
+        h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.2s;
+        }
+
+        .tagline.visible { opacity: 1; transform: translateY(0); }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.3s;
+        }
+
+        .cta-group.visible { opacity: 1; transform: translateY(0); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(15, 79, 92, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(15, 79, 92, 0.35);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 60px 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Features */
+        .features {
+            padding: 120px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .section-title.visible { opacity: 1; transform: translateY(0); }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.1s;
+        }
+
+        .section-subtitle.visible { opacity: 1; transform: translateY(0); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            padding: 40px 32px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(15, 79, 92, 0.08);
+            border-color: rgba(14, 165, 233, 0.2);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--accent-light), rgba(16, 185, 129, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .feature-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--primary);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .feature-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Demo Section */
+        .demo {
+            padding: 100px 0;
+            background: linear-gradient(180deg, white 0%, var(--bg) 100%);
+        }
+
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .demo-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .demo-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 24px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(15, 79, 92, 0.04);
+            transition: all 0.3s ease;
+            min-width: 120px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .demo-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .demo-step:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .demo-step:hover .step-num {
+            background: var(--accent);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .step-connector {
+            display: flex;
+            align-items: center;
+            color: var(--border);
+        }
+
+        .step-connector svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-muted);
+            stroke-width: 2;
+            opacity: 0.4;
+        }
+
+        /* Tech */
+        .tech {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .tech-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tech-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-mascot {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 32px;
+            opacity: 0.9;
+        }
+
+        .footer-mascot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+
+            .hero-text { padding-left: 0; order: 2; }
+            .mascot-section { order: 1; }
+
+            .mascot-wrapper {
+                width: 350px;
+                height: 350px;
+            }
+
+            .mascot-glow {
+                width: 400px;
+                height: 400px;
+            }
+
+            h1 { font-size: 3rem; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 140px 0 60px; }
+            h1 { font-size: 2.25rem; }
+
+            .mascot-wrapper {
+                width: 280px;
+                height: 280px;
+            }
+
+            .mascot-glow {
+                width: 320px;
+                height: 320px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 32px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .features-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 2rem; }
+
+            .demo-flow {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .step-connector {
+                transform: rotate(90deg);
+                margin: 8px 0;
+            }
+
+            .cta-group { flex-direction: column; }
+            .btn { justify-content: center; }
+            .footer-links { flex-direction: column; align-items: center; }
+
+            .social-links {
+                gap: 8px;
+            }
+
+            .badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-mascot">
+                        <img src="mascot.png" alt="Ayushman">
+                    </div>
+                    <span class="logo-text">Ayushman AI</span>
+                </a>
+                <div class="social-links">
+                    <span class="badge">AI for Bharat 2024</span>
+                    <a href="https://www.linkedin.com/in/chirag0264" target="_blank" class="social-link" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/chirag9899/ayushman-ai-companion" target="_blank" class="social-link" title="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <span class="eyebrow">AI-Powered Healthcare</span>
+                    <h1>
+                        Your Personal<br>
+                        <span class="highlight">AI Care Copilot</span>
+                    </h1>
+                    <p class="tagline">
+                        Manage medications, get multilingual AI guidance in Hindi & English, 
+                        and share structured health summaries with your doctor—all with 
+                        privacy-first, offline-capable design.
+                    </p>
+                    <div class="cta-group">
+                        <a href="#download" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download APK
+                        </a>
+                        <a href="https://youtu.be/your-video" target="_blank" class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Watch Demo
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mascot-section">
+                    <div class="mascot-wrapper">
+                        <div class="mascot-glow"></div>
+                        <div class="mascot-main">
+                            <img src="mascot.png" alt="Your AI Health Companion">
+                        </div>
+                        <div class="particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">AI Test Scenarios</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Languages (Hindi + English)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Offline Capable</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Step Demo Tour</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Built for Patients & Providers</h2>
+                <p class="section-subtitle">
+                    Complete health companion with clinic-ready outputs
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10.5 20.5L10.5 3.5"/>
+                            <path d="M13.5 20.5L13.5 3.5"/>
+                            <path d="M6 10.5H3C2.46957 10.5 1.96086 10.2893 1.58579 9.91421C1.21071 9.53914 1 9.03043 1 8.5V5.5C1 4.96957 1.21071 4.46086 1.58579 4.08579C1.96086 3.71071 2.46957 3.5 3 3.5H6"/>
+                            <path d="M18 10.5H21C21.5304 10.5 22.0391 10.2893 22.4142 9.91421C22.7893 9.53914 23 9.03043 23 8.5V5.5C23 4.96957 22.7893 4.46086 22.4142 4.08579C22.0391 3.71071 21.5304 3.5 21 3.5H18"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Smart Medication Reminders</h3>
+                    <p class="feature-desc">
+                        Schedule medicines with custom repeat days. Get alarm-style notifications 
+                        and track adherence with simple actions.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2a3 3 0 0 0-3 3v14a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                            <path d="M19 10v4a7 7 0 0 1-14 0v-4"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Multilingual AI Coach</h3>
+                    <p class="feature-desc">
+                        Chat naturally in Hindi or English via text, voice, or photos. 
+                        Safety-first guidance with escalation awareness.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 8.56 8.56 0 0 1 4.96-3.18c.8-.12 1.63-.18 2.46-.18"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 8.56 8.56 0 0 0-4.96-3.18"/>
+                            <circle cx="12" cy="11" r="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Intelligent Memory</h3>
+                    <p class="feature-desc">
+                        AI remembers your context, tracks health trends, and provides 
+                        weekly summaries with personalized insights.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Provider Handoff</h3>
+                    <p class="feature-desc">
+                        Generate 7-day or 30-day clinical summaries with adherence stats, 
+                        symptoms timeline, and red flags for doctors.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                            <path d="M3 20h18"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Evaluation Suite</h3>
+                    <p class="feature-desc">
+                        Built-in 30-scenario benchmark measuring AI safety, actionability, 
+                        and routing—proving responsible AI design.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Privacy First</h3>
+                    <p class="feature-desc">
+                        Encrypted local storage. Optional cloud sync only when enabled. 
+                        Full export and delete controls.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="demo">
+        <div class="container">
+            <div class="demo-container">
+                <h2 class="section-title">Guided Demo Tour</h2>
+                <p class="section-subtitle">
+                    Built-in 5-step walkthrough for judges and stakeholders
+                </p>
+                <div class="demo-flow">
+                    <div class="demo-step">
+                        <div class="step-num">1</div>
+                        <span class="step-label">Overview</span>
+                    </div>
+                    
+                    <div class="step-connector">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="demo-step">
+                        <div class="step-num">2</div>
+                        <span class="step-label">Reminders</span>
+                    </div>
+                    
+                    <div class="step-connector">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="demo-step">
+                        <div class="step-num">3</div>
+                        <span class="step-label">AI Coach</span>
+                    </div>
+                    
+                    <div class="step-connector">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="demo-step">
+                        <div class="step-num">4</div>
+                        <span class="step-label">Handoff</span>
+                    </div>
+                    
+                    <div class="step-connector">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="demo-step">
+                        <div class="step-num">5</div>
+                        <span class="step-label">Evaluation</span>
+                    </div>
+                </div>
+                <a href="https://github.com/chirag9899/ayushman-ai-companion" target="_blank" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="tech">
+        <div class="container">
+            <h2 class="section-title">Modern Tech Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">Expo React Native</div>
+                <div class="tech-item">AWS SAM + Lambda</div>
+                <div class="tech-item">Amazon Bedrock AI</div>
+                <div class="tech-item">Multilingual NLP</div>
+                <div class="tech-item">Encrypted Storage</div>
+                <div class="tech-item">Native Android</div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="download">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-mascot">
+                    <img src="mascot.png" alt="Ayushman">
+                </div>
+                <h3 class="footer-title">Ready to Transform Healthcare?</h3>
+                <div class="footer-links">
+                    <a href="https://drive.google.com/your-apk" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download APK
+                    </a>
+                    <a href="https://youtu.be/your-video" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        Demo Video
+                    </a>
+                    <a href="https://docs.google.com/your-deck" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Pitch Deck
+                    </a>
+                    <a href="https://github.com/chirag9899/ayushman-ai-companion" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                        </svg>
+                        GitHub
+                    </a>
+                    <a href="https://www.linkedin.com/in/chirag0264" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                    </a>
+                </div>
+                <p class="copyright">
+                    © 2024 Ayushman AI Companion · Built with care for Bharat · AWS AI for Bharat Hackathon
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.eyebrow, h1, .tagline, .cta-group, .mascot-glow, .mascot-main, .section-title, .section-subtitle, .feature-card, .demo-step, .tech-item, .stat-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        const demoSteps = document.querySelectorAll('.demo-step');
+        demoSteps.forEach((step, index) => {
+            step.style.transitionDelay = `${index * 0.15}s`;
+        });
+
+        const techItems = document.querySelectorAll('.tech-item');
+        techItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.08}s`;
+        });
+
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.eyebrow, h1, .tagline, .cta-group, .mascot-glow, .mascot-main').forEach(el => {
+                el.classList.add('visible');
+            });
+        }, 100);
+    </script>
+</body>
+</html>

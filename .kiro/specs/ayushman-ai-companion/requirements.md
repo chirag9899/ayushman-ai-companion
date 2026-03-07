@@ -2,140 +2,138 @@
 
 ## Introduction
 
-Ayushman AI Companion is a Progressive Web Application (PWA) designed to support patients with chronic diseases (diabetes, hypertension) in India, particularly in rural and underserved areas. The application provides personalized health education, medication reminders, symptom tracking, and lifestyle guidance through a voice-first, multilingual interface. The system operates primarily offline with local data storage to ensure privacy and accessibility in low-connectivity environments.
+Ayushman AI Companion is a mobile-first healthcare support application built with Expo React Native and an AWS-backed AI layer.  
+The system helps patients with medication adherence, symptom guidance, and multilingual AI support while generating clinic-ready summaries and measurable evaluation outputs for responsible AI workflows.
 
 ## Glossary
 
-- **System**: The Ayushman AI Companion PWA application
-- **User**: A patient with chronic disease(s) using the application
-- **Onboarding**: Initial setup process where user provides health profile information
-- **Voice Input**: Speech-to-text functionality for hands-free interaction
-- **Local Storage**: Browser-based data storage on the user's device
-- **Advisory Content**: Educational health information and suggestions (non-diagnostic)
-- **Medicine Reminder**: Scheduled notification for medication adherence
-- **Symptom Log**: User-recorded health symptoms and readings
-- **Offline Mode**: Application functionality without internet connectivity
-- **Sync**: Data synchronization when internet connection is restored
-- **Dashboard**: Main application screen showing health overview and actions
+- **System**: Ayushman AI Companion mobile app + backend APIs
+- **User**: Patient using the app for daily health support
+- **Coach**: AI chat experience (text, voice, image)
+- **Reminder**: Scheduled medicine alert with action logging
+- **Handoff Summary**: Doctor-friendly 7/30 day snapshot export
+- **Synthetic Evaluation**: Benchmark run over predefined synthetic scenarios
+- **Demo Tour**: Guided in-app walkthrough for reviewers/judges
+- **Local Memory**: Encrypted local storage for messages and profile context
 
 ## Requirements
 
-### Requirement 1
+### Requirement 1 - Onboarding and Consent
 
-**User Story:** As a new user, I want to complete an initial health assessment during onboarding, so that the app can provide personalized health guidance.
-
-#### Acceptance Criteria
-
-1. WHEN a user launches the application for the first time, THE System SHALL display a language selection screen with Hindi, English, and regional language options
-2. WHEN a user selects a language, THE System SHALL present a consent and disclaimer screen explaining that the app provides advisory content only
-3. WHEN a user proceeds with onboarding, THE System SHALL collect daily habits information including diet patterns, water intake, exercise routine, and substance use
-4. WHEN a user provides medicine information, THE System SHALL record current medications with names, dosages, and frequency
-5. WHEN a user completes the onboarding flow, THE System SHALL generate a personalized health profile summary and display the first health tip
-
-### Requirement 2
-
-**User Story:** As a user with low literacy, I want to interact with the app using voice commands, so that I can use the app without typing.
+**User Story:** As a first-time user, I want a simple onboarding flow so I can start quickly while giving informed consent.
 
 #### Acceptance Criteria
 
-1. WHEN a user taps a voice input button, THE System SHALL activate speech-to-text functionality and capture spoken input
-2. WHEN voice input is captured, THE System SHALL convert speech to text and display the transcription for user confirmation
-3. WHEN a user speaks in their selected language, THE System SHALL process the input in that language
-4. WHEN voice input fails or is unclear, THE System SHALL provide a fallback option to type or retry voice input
-5. WHEN important content is displayed, THE System SHALL provide text-to-speech playback option for audio output
+1. WHEN the app opens for first use, THE System SHALL show landing and onboarding before dashboard access
+2. WHEN onboarding is completed, THE System SHALL store language, body basics, and consent state
+3. WHEN consent is not accepted, THE System SHALL block health coaching and data sync actions
+4. WHEN onboarding completes, THE System SHALL request notification permission for reminders
+5. WHEN app restarts, THE System SHALL route users based on onboarding completion state
 
-### Requirement 3
+### Requirement 2 - Medication Scheduling and Reminder Actions
 
-**User Story:** As a user taking multiple medications, I want to receive timely reminders, so that I maintain medication adherence.
-
-#### Acceptance Criteria
-
-1. WHEN a user sets up a medicine reminder with time and frequency, THE System SHALL schedule notifications at the specified times
-2. WHEN a scheduled reminder time arrives, THE System SHALL display a push notification with medicine name and dosage
-3. WHEN a user taps a reminder notification, THE System SHALL open the app to the medicine tracking screen
-4. WHEN a user marks a medicine as taken, THE System SHALL log the adherence event with timestamp
-5. WHEN a user misses a reminder, THE System SHALL send a follow-up notification after a configurable delay period
-
-### Requirement 4
-
-**User Story:** As a user monitoring my health, I want to log symptoms and readings, so that I can track my condition over time.
+**User Story:** As a user taking medicines, I want reliable reminders and action controls so I can improve adherence.
 
 #### Acceptance Criteria
 
-1. WHEN a user accesses the symptom logging feature, THE System SHALL provide voice and text input options for symptom description
-2. WHEN a user logs a symptom, THE System SHALL record the symptom with timestamp and optional severity rating
-3. WHEN a user enters health readings such as blood sugar or blood pressure, THE System SHALL validate the values are within reasonable ranges
-4. WHEN symptom data is logged, THE System SHALL store the information in local storage immediately
-5. WHEN a user views their symptom history, THE System SHALL display logs in chronological order with visual charts
+1. WHEN a schedule is added, THE System SHALL validate medication name and time format
+2. WHEN a schedule uses custom weekdays, THE System SHALL store and apply selected days
+3. WHEN reminder time is due, THE System SHALL trigger notification/alarm path based on platform capability
+4. WHEN user selects taken/snooze/dismiss action, THE System SHALL persist action status with timestamp
+5. WHEN schedules change, THE System SHALL rebuild future notifications without duplicate active schedules
 
-### Requirement 5
+### Requirement 3 - AI Coach: Text, Voice, and Image
 
-**User Story:** As a user seeking health guidance, I want to receive personalized diet and lifestyle tips, so that I can better manage my chronic condition.
-
-#### Acceptance Criteria
-
-1. WHEN a user's health profile indicates specific conditions, THE System SHALL generate relevant dietary recommendations based on Indian food context
-2. WHEN a user requests lifestyle tips, THE System SHALL provide advice considering their current medications and past health history
-3. WHEN the System provides health advice, THE System SHALL include a disclaimer stating this is educational content and not medical diagnosis
-4. WHEN a user views tips, THE System SHALL present information in simple language appropriate for low-literacy users
-5. WHEN tips are displayed, THE System SHALL offer voice playback for audio consumption
-
-### Requirement 6
-
-**User Story:** As a user in a rural area with limited connectivity, I want the app to work offline, so that I can access my health information anytime.
+**User Story:** As a user, I want to chat in natural language (including Hindi) and attach voice/image inputs for better help.
 
 #### Acceptance Criteria
 
-1. WHEN the application is installed as a PWA, THE System SHALL cache essential resources for offline functionality
-2. WHEN internet connectivity is unavailable, THE System SHALL allow users to log symptoms, view reminders, and access cached tips
-3. WHEN data is created or modified offline, THE System SHALL store changes in local storage
-4. WHEN internet connectivity is restored, THE System SHALL automatically sync local data with any cloud backup if configured
-5. WHEN operating offline, THE System SHALL display a clear indicator showing offline mode status
+1. WHEN user types or speaks a message, THE System SHALL send it to Coach flow with language context
+2. WHEN voice transcription returns duplicate final tokens, THE System SHALL deduplicate repeated fragments
+3. WHEN an image is attached, THE System SHALL support image+text request in a single send action
+4. WHEN backend vision analysis succeeds, THE System SHALL show analysis response and safety summary card
+5. WHEN AI backend fails, THE System SHALL show specific fallback error messaging instead of generic failure copy
 
-### Requirement 7
+### Requirement 4 - Command Execution from Coach
 
-**User Story:** As a user concerned about privacy, I want my health data stored locally on my device, so that my sensitive information remains secure.
-
-#### Acceptance Criteria
-
-1. WHEN a user enters health information, THE System SHALL store all data in browser local storage on the user's device
-2. WHEN the System stores data, THE System SHALL not transmit personal health information to external servers without explicit user consent
-3. WHEN a user requests data deletion, THE System SHALL remove all stored information from local storage
-4. WHEN the System accesses stored data, THE System SHALL encrypt sensitive fields such as medicine names and symptom descriptions
-5. WHEN a user exports their data, THE System SHALL provide the information in a readable format for personal records
-
-### Requirement 8
-
-**User Story:** As a user needing medical consultation, I want quick access to telemedicine services, so that I can connect with healthcare providers when necessary.
+**User Story:** As a user, I want Coach to understand reminder commands so I can set schedules directly from chat.
 
 #### Acceptance Criteria
 
-1. WHEN a user accesses the help section, THE System SHALL display a prominent link to e-Sanjeevani or configured telemedicine service
-2. WHEN a user taps the telemedicine link, THE System SHALL open the external service in a new browser context
-3. WHEN the System detects concerning symptom patterns, THE System SHALL suggest consulting a healthcare provider with a direct link
-4. WHEN a user views health advice, THE System SHALL include reminders that professional medical consultation is recommended for diagnosis
-5. WHEN emergency symptoms are logged, THE System SHALL display urgent care contact information prominently
+1. WHEN user asks Coach to set a medicine reminder, THE System SHALL parse actionable intent from message
+2. WHEN parsed command is valid, THE System SHALL create/update medication schedule from Coach action
+3. WHEN parsed command is invalid or incomplete, THE System SHALL ask for missing fields
+4. WHEN command execution completes, THE System SHALL show confirmation in chat
+5. WHEN a reminder is created from Coach, THE System SHALL trigger rescheduling of notification infrastructure
 
-### Requirement 9
+### Requirement 5 - Personalized Memory and Insights
 
-**User Story:** As a user managing my health journey, I want to view my progress over time, so that I can stay motivated and informed.
-
-#### Acceptance Criteria
-
-1. WHEN a user accesses the progress dashboard, THE System SHALL display visual charts showing symptom trends over time
-2. WHEN medication adherence data exists, THE System SHALL calculate and display adherence percentage for each medicine
-3. WHEN a user views progress, THE System SHALL highlight positive trends with encouraging messages
-4. WHEN sufficient data is available, THE System SHALL generate weekly or monthly health summaries
-5. WHEN a user shares progress, THE System SHALL allow exporting charts and summaries as images or PDF files
-
-### Requirement 10
-
-**User Story:** As a user who may forget to use the app, I want to receive regular engagement notifications, so that I stay consistent with health management.
+**User Story:** As a returning user, I want the app to remember my context and provide trend-aware support.
 
 #### Acceptance Criteria
 
-1. WHEN a user has not logged symptoms for a configured period, THE System SHALL send a gentle reminder notification
-2. WHEN daily health tips are available, THE System SHALL send one notification per day at a user-preferred time
-3. WHEN a user taps an engagement notification, THE System SHALL open directly to the relevant feature
-4. WHEN a user disables notifications, THE System SHALL respect the preference and stop sending push notifications
-5. WHEN the System sends notifications, THE System SHALL ensure messages are supportive and non-intrusive
+1. WHEN users interact with Coach, THE System SHALL update encrypted local memory artifacts
+2. WHEN symptom/reminder data grows, THE System SHALL generate weekly summary and trend insights
+3. WHEN correlations are detected, THE System SHALL expose insight cards in dashboard surfaces
+4. WHEN memory is loaded, THE System SHALL preserve decryption fallback handling without crashing
+5. WHEN user starts a new chat, THE System SHALL archive previous session to history
+
+### Requirement 6 - Safety and Responsible AI
+
+**User Story:** As a healthcare user, I want clear safety framing so I do not confuse support content with diagnosis.
+
+#### Acceptance Criteria
+
+1. WHEN Coach renders AI responses, THE System SHALL show educational framing and non-diagnosis language
+2. WHEN response confidence/next action exists, THE System SHALL display structured safety summary card
+3. WHEN urgent risk language is detected, THE System SHALL include seek-care escalation guidance
+4. WHEN user-facing mode is active, THE System SHALL not display developer-only debug snapshots
+5. WHEN system produces suggestions, THE System SHALL avoid definitive diagnosis claims
+
+### Requirement 7 - Provider Handoff Summary
+
+**User Story:** As a clinician or patient preparing for consultation, I want a compact summary of recent history.
+
+#### Acceptance Criteria
+
+1. WHEN provider handoff screen opens, THE System SHALL present 7-day and 30-day windows
+2. WHEN snapshot is computed, THE System SHALL include adherence, symptom trends, timeline, and red flags
+3. WHEN latest readings are available, THE System SHALL include normalized vitals in summary view
+4. WHEN export is triggered, THE System SHALL generate shareable text summary file
+5. WHEN no data is present, THE System SHALL show graceful empty/NA states
+
+### Requirement 8 - Synthetic Evaluation Suite
+
+**User Story:** As a reviewer, I want measurable evaluation so I can assess safety and usefulness.
+
+#### Acceptance Criteria
+
+1. WHEN evaluation run starts, THE System SHALL execute all synthetic cases and show progress
+2. WHEN each case completes, THE System SHALL score pass/fail, safety, routing, and actionability
+3. WHEN run finishes, THE System SHALL compute aggregate scorecard metrics
+4. WHEN export is requested, THE System SHALL produce JSON report artifact
+5. WHEN individual case request fails, THE System SHALL record failure in report instead of aborting full run
+
+### Requirement 9 - Demo Tour Experience
+
+**User Story:** As a presenter, I want a guided walkthrough so I can reliably demonstrate value in under 3 minutes.
+
+#### Acceptance Criteria
+
+1. WHEN Start Demo Tour is triggered, THE System SHALL preload demo data and start at step 1 deterministically
+2. WHEN tour is active, THE System SHALL display lock overlay controls (Back/Next/Skip/Finish)
+3. WHEN moving steps, THE System SHALL navigate to mapped screen sequence consistently
+4. WHEN narration mode is enabled, THE System SHALL play voice narration for each step
+5. WHEN reset demo state is triggered, THE System SHALL restore demo data and return to overview
+
+### Requirement 10 - Privacy, Storage, and Data Controls
+
+**User Story:** As a privacy-conscious user, I want local encrypted data controls and optional cloud sync.
+
+#### Acceptance Criteria
+
+1. WHEN profile/log/chat data is written locally, THE System SHALL encrypt sensitive artifacts at rest
+2. WHEN cloud sync is disabled, THE System SHALL continue to function fully in local mode
+3. WHEN cloud sync is enabled, THE System SHALL attempt profile sync and queue on transient failures
+4. WHEN clear local data is requested, THE System SHALL delete local artifacts and reset runtime state
+5. WHEN data export actions are used, THE System SHALL generate shareable files without exposing hidden secrets

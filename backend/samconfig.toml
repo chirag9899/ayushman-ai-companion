@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "ayushman-ai-companion-backend"
+resolve_s3 = true
+s3_prefix = "ayushman-ai-companion-backend"
+region = "ap-south-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+
+[default.global.parameters]
+region = "ap-south-1"

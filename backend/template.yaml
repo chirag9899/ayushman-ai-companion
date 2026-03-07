@@ -1,0 +1,339 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Ayushman AI Companion backend scaffold
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 10
+    MemorySize: 256
+    Environment:
+      Variables:
+        USERS_TABLE: !Ref UsersTable
+        SYMPTOMS_TABLE: !Ref SymptomsTable
+        MEDICATIONS_TABLE: !Ref MedicationsTable
+        REMINDERS_TABLE: !Ref RemindersTable
+        TIPS_TABLE: !Ref TipsTable
+        BEDROCK_REGION: us-east-1
+        BEDROCK_MODEL_ID: amazon.nova-pro-v1:0
+        BEDROCK_VISION_MODEL_ID: amazon.nova-lite-v1:0
+        CHAT_UPLOADS_BUCKET: !Ref ChatUploadsBucket
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods: [GET, POST, PUT, DELETE, OPTIONS]
+        AllowOrigins: ['*']
+        AllowHeaders: ['*']
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/health/index.handler
+      CodeUri: .
+      Events:
+        HealthRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /health
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/health/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  GenerateTipFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/generateTip/index.handler
+      CodeUri: .
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TipsTable
+        - Statement:
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: '*'
+      Events:
+        GenerateTipRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /tips/generate
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/generateTip/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  ChatConverseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/chatConverse/index.handler
+      CodeUri: .
+      Policies:
+        - Statement:
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: '*'
+      Events:
+        ChatConverseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /chat/converse
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/chatConverse/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  AnalyzeImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/analyzeImage/index.handler
+      CodeUri: .
+      Policies:
+        - Statement:
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: '*'
+        - S3CrudPolicy:
+            BucketName: !Ref ChatUploadsBucket
+      Events:
+        AnalyzeImageRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /chat/analyze-image
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/analyzeImage/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  ChatImageUploadUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/chatImageUploadUrl/index.handler
+      CodeUri: .
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref ChatUploadsBucket
+      Events:
+        ChatImageUploadUrlRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /chat/image-upload-url
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/chatImageUploadUrl/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  SyncProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/syncProfile/index.handler
+      CodeUri: .
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Events:
+        SyncProfileRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /profile/sync
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/syncProfile/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  DeleteProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/deleteProfile/index.handler
+      CodeUri: .
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SymptomsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MedicationsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RemindersTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TipsTable
+      Events:
+        DeleteProfileRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /profile/delete
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/deleteProfile/index.ts
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        Format: cjs
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  SymptomsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  MedicationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  RemindersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  TipsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  FrontendHostingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  ChatUploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireChatUploadsFast
+            Status: Enabled
+            ExpirationInDays: 1
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 1
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+Outputs:
+  ApiBaseUrl:
+    Description: HTTP API base URL
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com'
+  FrontendBucketName:
+    Description: Bucket for frontend build artifacts
+    Value: !Ref FrontendHostingBucket
+  ChatUploadsBucketName:
+    Description: Bucket for private coach image uploads
+    Value: !Ref ChatUploadsBucket

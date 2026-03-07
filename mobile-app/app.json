@@ -1,0 +1,74 @@
+{
+  "expo": {
+    "name": "Ayushman AI Companion",
+    "slug": "ayushman-ai-companion-mobile",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "primaryColor": "#0f4f5c",
+    "backgroundColor": "#eef6f2",
+    "description": "AI-powered healthcare companion with medication reminders, multilingual AI coach, and clinic-ready summaries for chronic disease management in India.",
+    "githubUrl": "https://github.com/chirag9899/ayushman-ai-companion",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#eef6f2"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow Ayushman AI Companion to transcribe your speech.",
+        "NSMicrophoneUsageDescription": "Allow Ayushman AI Companion to use your microphone for voice transcription."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.bharat.ayushmanai",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM"
+      ]
+    },
+    "plugins": [
+      "./plugins/withNotifeeFix",
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sound/ringing_an_old_phone_on_an_alarm_clock.mp3"
+          ]
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Ayushman AI Companion to use your microphone for voice transcription.",
+          "speechRecognitionPermission": "Allow Ayushman AI Companion to transcribe your speech.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f36f918c-2630-40ef-9676-38f3605fa325"
+      }
+    },
+    "owner": "vanshandchirag"
+  }
+}

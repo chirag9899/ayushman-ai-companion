@@ -1,174 +1,89 @@
 # Ayushman AI Companion
 
-> Your Personal Chronic Disease Management Partner
+AI Care Copilot for patients with a clinic-ready summary layer for healthcare workflows.
 
-[![AWS AI for Bharat Hackathon](https://img.shields.io/badge/AWS-AI%20for%20Bharat-orange)](https://aws.amazon.com)
-[![PWA](https://img.shields.io/badge/PWA-Enabled-blue)](https://web.dev/progressive-web-apps/)
+## What this repo contains
 
-## 🎯 Problem Statement
+- `mobile-app/` - Expo React Native app (primary prototype)
+- `backend/` - AWS SAM backend for profile sync, chat/tips/image flows
+- `requirements.md` / `design.md` - product and technical design docs
 
-India faces a chronic disease epidemic:
-- **77 million** people living with diabetes
-- **200+ million** with hypertension
-- Limited healthcare access in rural areas
-- Low health literacy rates
-- Poor medication adherence (40-50%)
-- Language barriers in healthcare delivery
+## Current product scope (prototype)
 
-## 💡 Our Solution
+- Medication reminders with scheduling and adherence logging
+- AI Coach (text + voice + image) with safety-oriented responses
+- History and personalized memory insights
+- Provider handoff summary (7/30 day, exportable)
+- Synthetic evaluation suite (safety/routing/actionability scorecard)
+- Guided demo tour mode for judging
 
-**Ayushman AI Companion** is a Progressive Web Application (PWA) designed to empower chronic disease patients in India through:
+## Quick start
 
-- 🗣️ **Voice-First Interface** - Accessible for low-literacy users
-- 🌐 **Multilingual Support** - Hindi, English, and regional languages
-- 📴 **Offline-First** - Works without internet connectivity
-- 🔒 **Privacy-Focused** - All data stored locally on device
-- 💊 **Smart Reminders** - Medication adherence tracking
-- 📊 **Health Tracking** - Symptom logs and progress visualization
-- 🤖 **AI-Powered Tips** - Personalized health guidance
+### 1) Mobile app
 
-## ✨ Key Features
-
-### 1. Intelligent Onboarding
-- Collects comprehensive health profile through voice or text
-- Captures daily habits, current medications, medical history
-- Records current symptoms and health readings
-
-### 2. Medication Management
-- Scheduled push notifications for medicine reminders
-- Adherence tracking with visual feedback
-- Follow-up reminders for missed doses
-
-### 3. Symptom & Health Tracking
-- Voice-enabled symptom logging
-- Blood sugar and blood pressure recording
-- Visual charts showing health trends over time
-
-### 4. Personalized Health Guidance
-- AI-generated diet recommendations (Indian food context)
-- Lifestyle tips based on user's condition
-- Educational content in simple, accessible language
-- Integration with e-Sanjeevani for telemedicine
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                     PWA Frontend                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   UI Layer   │  │ Voice Layer  │  │  Offline     │  │
-│  │  (React)     │  │ (Web Speech) │  │  Manager     │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │         Application State (Zustand)               │  │
-│  └──────────────────────────────────────────────────┘  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Health     │  │  Reminder    │  │   AI Tips    │  │
-│  │   Service    │  │  Service     │  │   Engine     │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │         Local Storage Layer (IndexedDB)           │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌────────────────────────┐
-              │   Service Worker       │
-              │   (Caching, Sync)      │
-              └────────────────────────┘
+```bash
+cd mobile-app
+npm install
+npm run start
 ```
 
-## 🛠️ Technology Stack
+Type check:
 
-- **Frontend**: React 18 + TypeScript
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand
-- **PWA**: Workbox
-- **Storage**: IndexedDB (via Dexie.js)
-- **Voice**: Web Speech API
-- **Charts**: Chart.js / Recharts
-- **Testing**: Fast-check (Property-based testing), React Testing Library
-- **Build Tool**: Vite
+```bash
+npm run typecheck
+```
 
-## 📋 Project Documentation
+### 2) Backend (optional for local UI work)
 
-This repository contains comprehensive technical documentation:
+```bash
+cd backend
+npm install
+sam build
+sam local start-api
+```
 
-- **[Requirements Document](requirements.md)** - 10 user stories with detailed acceptance criteria following EARS patterns
-- **[Design Document](design.md)** - Complete technical design with:
-  - System architecture
-  - Component interfaces
-  - Data models
-  - 17 correctness properties for property-based testing
-  - Comprehensive testing strategy
-  - Security considerations
+Set `EXPO_PUBLIC_API_BASE_URL` in `mobile-app/.env` to connect app with backend.
 
-## 🎯 Design Principles
+## Clean architecture (mobile)
 
-1. **Voice-First** - Primary interaction through speech for accessibility
-2. **Offline-First** - Core functionality available without internet
-3. **Privacy-First** - All sensitive data stored locally on device
-4. **Simplicity** - Minimal taps, large buttons, clear visual hierarchy
-5. **Responsible AI** - Clear disclaimers, educational focus, no diagnosis
+The app is organized by feature + shared platform layers:
 
-## 🧪 Testing Strategy
+- `src/features/*` - feature modules (`coach`, `dashboard`, `reports`, `onboarding`, `landing`)
+- `src/state/AppState.tsx` - app-level orchestration and cross-feature state
+- `src/services/*` - API and external integrations
+- `src/lib/*` - pure utilities (i18n, id generation, storage/privacy helpers)
+- `src/components/*` - reusable UI and presentation primitives
+- `src/types/*` - shared domain types
 
-### Property-Based Testing
-- Using **fast-check** library for TypeScript
-- 17 correctness properties defined and tested
-- Minimum 100 iterations per property test
-- Properties cover:
-  - Onboarding data completeness
-  - Reminder scheduling accuracy
-  - Symptom log persistence
-  - Offline-online sync consistency
-  - Adherence calculation accuracy
+## Build and distribution
 
-### Unit Testing
-- React Testing Library for component tests
-- Service layer testing with mock data
-- Utility function testing
+### Android APK/AAB (recommended for judges)
 
-## 🌍 Social Impact
+Use EAS build from `mobile-app`:
 
-### Target Audience
-- 277+ million chronic disease patients in India
-- Focus on rural and underserved communities
-- Low-literacy populations
-- Non-English speakers
+```bash
+eas build -p android --profile preview
+```
 
-### Expected Outcomes
-- 30% improvement in medication adherence
-- Reduced emergency hospital visits
-- Better quality of life for patients
-- Empowered self-management of chronic conditions
+Then share the generated install link in your demo hub.
 
-## 🚀 Future Enhancements
+### Optional web export (for simple landing/demo host)
 
-- Integration with AWS Bedrock for advanced AI tips
-- Amazon Polly for text-to-speech
-- Amazon Transcribe for improved voice recognition
-- Wearable device integration
-- Community support features
-- Caregiver monitoring (with consent)
+```bash
+cd mobile-app
+npx expo export --platform web
+```
 
-## 📄 License
+If successful, static files are generated under `dist/` for hosting.
 
-This project is developed for the AWS AI for Bharat Hackathon.
+## Submission assets
 
-## 👥 Team
+Use `SUBMISSION_KIT.md` to prepare:
 
-**Hackathon Submission:** AWS AI for Bharat Hackathon 2024
+- Working prototype link
+- 3-minute explanation video
+- Deck/PPT structure
 
-[Add your team member names and roles here]
+## License
 
-## 🙏 Acknowledgments
-
-- AWS AI for Bharat Hackathon
-- ICMR and NP-NCD guidelines for chronic disease management
-- ADA (American Diabetes Association) standards
-- e-Sanjeevani telemedicine platform
-
----
-
-**Built with ❤️ for Bharat's Healthcare**
+Developed for hackathon prototype usage.

@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This folder contains an AWS SAM scaffold for:",
+  "main": "src/health/index.ts",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "sam build",
+    "run": "sam local start-api",
+    "deploy": "sam deploy --guided"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1000.0",
+    "@aws-sdk/client-dynamodb": "^3.1000.0",
+    "@aws-sdk/client-s3": "^3.1000.0",
+    "@aws-sdk/lib-dynamodb": "^3.1000.0",
+    "@aws-sdk/s3-request-presigner": "^3.1000.0",
+    "esbuild": "^0.27.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.156",
+    "@types/node": "^24.5.2",
+    "typescript": "^5.9.2"
+  }
+}
