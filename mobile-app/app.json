@@ -41,6 +41,7 @@
       ]
     },
     "plugins": [
+      "./plugins/withNotifeeGradle",
       [
         "expo-notifications",
         {
