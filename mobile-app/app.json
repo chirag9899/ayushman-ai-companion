@@ -41,7 +41,18 @@
       ]
     },
     "plugins": [
-      "./plugins/withNotifeeFix",
+      "./plugins/withNotifeeGradle",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.24",
+            "packagingOptions": {
+              "pickFirst": ["**/libc++_shared.so"]
+            }
+          }
+        }
+      ],
       [
         "expo-notifications",
         {
