@@ -41,7 +41,7 @@
       ]
     },
     "plugins": [
-      "./plugins/withNotifeeGradle",
+      "./plugins/withNotifeeJitpackBypass",
       [
         "expo-notifications",
         {
