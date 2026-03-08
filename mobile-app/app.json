@@ -48,7 +48,9 @@
           "android": {
             "kotlinVersion": "1.9.24",
             "packagingOptions": {
-              "pickFirst": ["**/libc++_shared.so"]
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
             }
           }
         }
@@ -77,9 +79,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "f36f918c-2630-40ef-9676-38f3605fa325"
+        "projectId": "c909c268-f8b7-41a1-8e76-b920d3352c94"
       }
     },
-    "owner": "vanshandchirag"
+    "owner": "amishasharmag"
   }
 }
