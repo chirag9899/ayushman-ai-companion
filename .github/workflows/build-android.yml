@@ -1,0 +1,47 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: mobile-app/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./mobile-app
+      run: npm ci
+
+    - name: Generate native project
+      working-directory: ./mobile-app
+      run: npx expo prebuild --platform android
+
+    - name: Grant execute permission for gradlew
+      working-directory: ./mobile-app/android
+      run: chmod +x gradlew
+
+    - name: Build APK
+      working-directory: ./mobile-app/android
+      run: ./gradlew assembleRelease --no-daemon
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release
+        path: mobile-app/android/app/build/outputs/apk/release/app-release.apk
